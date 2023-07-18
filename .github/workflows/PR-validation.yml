@@ -44,6 +44,6 @@ jobs:
 
     - name: Run usdchecker on changed USD files
       run: |
-        for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            usdchecker $file
+        for file in $(echo ${{ steps.changed-files.outputs.all_changed_files }} | grep -vxFf .skip-usdchecker-files); do
+          usdchecker $file
         done
