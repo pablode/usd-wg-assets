@@ -92,7 +92,7 @@ def Camera "Camera" (
     uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZXY", "xformOp:scale"]
 }
 
-def DistantLight "Sun" (
+def DistantLight "Sun_2" (
     prepend apiSchemas = ["ShapingAPI"]
     kind = "model"
 )
