@@ -27,6 +27,19 @@ jobs:
     - name: Install usd-core PyPI package
       run: pip install usd-core --user
 
+    - name: Patch usd-core for USD issue 3055
+      run: |
+        mkdir -p /home/runner/.local/lib/python3.10/site-packages/pxr/pluginfo/usdHydra/resources/shaders
+        mkdir -p /home/runner/.local/lib/python3.10/site-packages/pxr/pluginfo/usdHydra/resources
+        mkdir -p /home/runner/.local/lib/python3.10/site-packages/pxr/pluginfo/usdHydra/shaders
+        mkdir -p /home/runner/.local/lib/python3.10/site-packages/pxr/UsdHydra/shaders
+        mkdir -p /home/runner/.local/lib/python3.10/site-packages/pxr/UsdHydra/resources/shaders
+        cp .github/shaderDefs.usda /home/runner/.local/lib/python3.10/site-packages/pxr/pluginfo/usdHydra/resources/shaders
+        cp .github/shaderDefs.usda /home/runner/.local/lib/python3.10/site-packages/pxr/pluginfo/usdHydra/resources
+        cp .github/shaderDefs.usda /home/runner/.local/lib/python3.10/site-packages/pxr/pluginfo/usdHydra/shaders
+        cp .github/shaderDefs.usda /home/runner/.local/lib/python3.10/site-packages/pxr/UsdHydra/shaders
+        cp .github/shaderDefs.usda /home/runner/.local/lib/python3.10/site-packages/pxr/UsdHydra/resources/shaders
+
     - name: Test usdchecker
       run: python .github/usdchecker.py --help
 
@@ -36,7 +49,8 @@ jobs:
         exit_code=0
         for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             echo "Checking $file"
-            if ! python .github/usdchecker.py $file; then
+            TF_DEBUG="PLUG*" python .github/usdchecker.py $file
+            if ! $?; then
                 exit_code=1;
             fi
         done
